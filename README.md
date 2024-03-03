@@ -135,6 +135,7 @@ Now, let's activate python virtual env and install fastapi library
 ```
 source env/bin/activate
 pip install "fastapi[all]"
+pip install SQLAlchemy
 ```
 
 With fastapi installed, let's start coding!
