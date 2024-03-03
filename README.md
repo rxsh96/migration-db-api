@@ -16,7 +16,7 @@ Create a local REST API that must:
 2. Upload these files to the new DB.
 3. Beable to insert batch transactions (1 up to 1000 rows) with one request.
 
-To tackle this project, I've chosen the following technologies: FastAPI (Python) for backend development, and PostgreSQL as the database management system. The selection of these technologies is based on their versatility, efficiency, and ability to provide a scalable solution quickly and effectively.
+To tackle this project, I've chosen the following technologies: FastAPI (Python) for backend development, React (JavaScript) for frontend design, and PostgreSQL as the database management system. The selection of these technologies is based on their versatility, efficiency, and ability to provide a scalable solution quickly and effectively.
 
 # Requirements
 
@@ -116,3 +116,25 @@ At the end of the file, add the following line:
 
 Save changes.
 Now, we can connect to our PostgreSQL Database.
+
+**3. Create Virtual Environment for Python**
+
+I've created a virtual environment called "env" inside backend directory
+
+```
+python3 -m venv env
+```
+
+    migration-db-api
+    ├── backend
+    │   └── env
+    └── README.md
+
+Now, let's activate python virtual env and install fastapi library
+
+```
+source env/bin/activate
+pip install "fastapi[all]"
+```
+
+With fastapi installed, let's start coding!
