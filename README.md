@@ -67,19 +67,19 @@ CREATE TABLE jobs (
 
 CREATE TABLE hired_employees (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-	datetime TIMESTAMP NOT NULL,
-	department_id INTEGER NOT NULL,
-	job_id INTEGER NOT NULL,
-	CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES departments(id),
-	CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES jobs(id)
+    name VARCHAR(255) NULL,
+    datetime TIMESTAMP WITHOUT TIME ZONE NULL,
+    department_id INTEGER,
+    job_id INTEGER,
+    FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE SET NULL
 );
 ```
 
 Let’s create a new user for security reasons:
 
 ```
-create user apl_apimigration with password 'apl123UseR';
+create user apl_apimigration with password 'xxxxxx';
 ```
 
 Grant to apl_apimigration read and write access to public sheme, commit changes and exit.
