@@ -1,8 +1,10 @@
+
 from fastapi import APIRouter, UploadFile, Depends, HTTPException, File
 from sqlalchemy.orm import Session
 from app.api.database.database_connection import get_db
 from app.api.models.models import HiredEmployee, Job, Department
 import csv
+from app.api.endpoints.utils import process_csv_batches
 
 
 router = APIRouter()
@@ -11,28 +13,19 @@ router = APIRouter()
 def root():
     return {'message': 'Welcome to Globant Challenge!'}
 
-@router.post('/upload-jobs/', tags=['Upload File'])
+    
+@router.post('/upload-hired_employee-v2/', tags=['Upload File'])
 async def upload_jobs(file: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
         content = await file.read()
-        decoded_content = content.decode('utf-8')
-
-        csv_reader = csv.reader(decoded_content.splitlines(), delimiter=',')
-        rows = list(csv_reader)
-
-        for row in rows:
-            print(row)
-            job = Job(id=row[0], job=row[1])
-            db.add(job)
-
-        db.commit()
-
+        await process_csv_batches(file_content=content, db=db)
         return {'message': 'CSV file uploaded and data inserted successfully'}
 
     except Exception as e:
         print(str(e))
         raise HTTPException(status_code=500, detail=f'Error: {str(e)}')
     
+
 @router.post('/upload-departments/', tags=['Upload File'])
 async def upload_departments(file: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
@@ -54,7 +47,6 @@ async def upload_departments(file: UploadFile = File(...), db: Session = Depends
     except Exception as e:
         print(str(e))
         raise HTTPException(status_code=500, detail=f'Error: {str(e)}')
-
 
 @router.post('/upload-hired_employee/', tags=['Upload File'])
 async def upload_hired_employees(file: UploadFile = File(...), db: Session = Depends(get_db)):
@@ -79,4 +71,27 @@ async def upload_hired_employees(file: UploadFile = File(...), db: Session = Dep
         return {'message': 'CSV file uploaded and data inserted successfully'}
 
     except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Error: {str(e)}')
+
+
+@router.post('/upload-jobs/', tags=['Upload File'])
+async def upload_jobs(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    try:
+        content = await file.read()
+        decoded_content = content.decode('utf-8')
+
+        csv_reader = csv.reader(decoded_content.splitlines(), delimiter=',')
+        rows = list(csv_reader)
+
+        for row in rows:
+            print(row)
+            job = Job(id=row[0], job=row[1])
+            db.add(job)
+
+        db.commit()
+
+        return {'message': 'CSV file uploaded and data inserted successfully'}
+
+    except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail=f'Error: {str(e)}')
