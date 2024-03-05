@@ -8,7 +8,7 @@ from app.api.models.models import HiredEmployee, Job, Department
 
 async def process_csv_batches(file_content: bytes, db: Session, batch_size: int = 1000):
     try:
-        df_chunks = pd.read_csv(BytesIO(file_content), chunksize = batch_size)
+        df_chunks = pd.read_csv(BytesIO(file_content), header=None, chunksize = batch_size)
         for chunk in df_chunks:
             await batch_upload_files(data=chunk, db=db)
     except Exception as e:
