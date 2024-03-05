@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.database.database_connection import get_db
 from app.api.endpoints.utils import get_departments_util, get_employees_util, get_jobs_util
-from app.api.models.pydantic_models import Department, DepartmentJobSummary, DepartmentJobSummaryList, Job, HiredEmployee
+from app.api.models.pydantic_models import Department, DepartmentHiredSummary, DepartmentHiredSummaryList, DepartmentJobSummary, DepartmentJobSummaryList, Job, HiredEmployee
 from sqlalchemy.sql import text
 
 router = APIRouter()
@@ -25,6 +25,46 @@ def get_jobs(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
 def get_employees(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     employees = get_employees_util(db, skip=skip, limit=limit)
     return employees
+
+@router.get('/hired-avg/', response_model = DepartmentHiredSummaryList, tags=['Get Methods'])
+def get_hired_average(year: int, db: Session = Depends(get_db)):
+    try:
+        query_results = db.execute(text('''
+                WITH hired_employee_counting AS 
+                (
+                    SELECT 
+                        d.id, 
+                        d.department, 
+                        COUNT(1) AS hired
+                    FROM hired_employees he
+                    INNER JOIN departments d
+                        ON he.department_id = d.id
+                    WHERE EXTRACT(YEAR FROM he.datetime) = :year
+                    GROUP BY d.id, d.department
+                ), hired_employee_average AS 
+                (
+                    SELECT AVG(hec.hired) AS avg_hired_employees
+                    FROM hired_employee_counting AS hec
+                ) 
+                SELECT hec.*
+                FROM hired_employee_counting hec, hired_employee_average hea
+                WHERE hec.hired > hea.avg_hired_employees
+                ORDER BY hec.hired DESC'''
+                ), {"year": year})
+        
+        response_data = []
+        for row in query_results:
+            id=row.id
+            department=row.department
+            hired=row.hired
+            response_data.append(DepartmentHiredSummary(id=id, department=department, hired=hired))
+
+        return DepartmentHiredSummaryList(data=response_data)
+    
+    except Exception as e:
+        print(str(e))
+        raise HTTPException(status_code=500, detail=f'Error: {str(e)}')
+
 
 @router.get("/job-summary", response_model=DepartmentJobSummaryList, tags=['Get Methods'])
 def get_department_job_summary(year: int, db: Session = Depends(get_db)):

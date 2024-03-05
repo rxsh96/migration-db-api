@@ -43,3 +43,12 @@ class DepartmentJobSummary(BaseModel):
 
 class DepartmentJobSummaryList(BaseModel):
     data: List[DepartmentJobSummary]
+
+
+class DepartmentHiredSummary(BaseModel):
+    id: int
+    department: str
+    hired: int
+
+class DepartmentHiredSummaryList(BaseModel):
+    data: List[DepartmentHiredSummary]
