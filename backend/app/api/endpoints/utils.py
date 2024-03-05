@@ -3,8 +3,18 @@ from io import BytesIO
 from fastapi.responses import JSONResponse
 import pandas as pd
 from sqlalchemy.orm import Session
-from app.api.models.models import HiredEmployee, Job, Department
+from app.api.models.alchemy_models import Department, Job, HiredEmployee
+from sqlalchemy.orm import Session
 
+
+def get_departments_util(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(Department).offset(skip).limit(limit).all()
+
+def get_jobs_util(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(Job).offset(skip).limit(limit).all()
+
+def get_employees_util(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(HiredEmployee).offset(skip).limit(limit).all()
 
 async def process_csv_batches(file_content: bytes, db: Session, batch_size: int = 1000):
     try:
@@ -30,4 +40,3 @@ async def batch_upload_files(data, db: Session):
     except Exception as e:
         db.rollback()
         return JSONResponse(content={'message': f'Error: {str(e)}'}, status_code=500)
-

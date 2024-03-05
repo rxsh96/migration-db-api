@@ -2,17 +2,11 @@
 from fastapi import APIRouter, UploadFile, Depends, HTTPException, File
 from sqlalchemy.orm import Session
 from app.api.database.database_connection import get_db
-from app.api.models.models import Job, Department
+from app.api.models.alchemy_models import Job, Department
 import csv
 from app.api.endpoints.utils import process_csv_batches
 
-
 router = APIRouter()
-
-@router.get('/', tags=['Welcome'])
-def root():
-    return {'message': 'Welcome to Globant Challenge!'}
-
     
 @router.post('/upload-hired_employees/', tags=['Upload File'])
 async def upload_employees(file: UploadFile = File(...), db: Session = Depends(get_db)):
