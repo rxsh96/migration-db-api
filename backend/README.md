@@ -3,7 +3,6 @@
 Source code and config specifications of the aplication.
 I developed this solution on Ubuntu 22.04.4 LTS Virtual Machine.
 
-# Section 1 and 2: API
 
 # Requirements
 
