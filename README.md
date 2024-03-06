@@ -27,7 +27,7 @@ In this repository you have two main folders:
 - container
 
 **backend**: contains all the source code and configurations needed to execute the application on your local system. 
-**container**: containerized all the source code and docker files to deploy containers and be able to run the application with  a simply ```docker compose up --build```
+**container**: contains all the source code and docker files to deploy containers and be able to run the application with  a simply ```docker compose up --build```
 
 
 #### Next Steps
